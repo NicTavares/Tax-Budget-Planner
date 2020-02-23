@@ -10,6 +10,8 @@ import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 
 /**
@@ -43,6 +45,7 @@ public class ATaxIncomeFrame extends JFrame {
     private JButton calc;
     private ActionListener plistener;
     private ActionListener blistener;
+    private ActionListener saveListener;
     private int flag = 1;
     
     
@@ -71,10 +74,31 @@ public class ATaxIncomeFrame extends JFrame {
                 setBudget();
             }
         }
+
+        class saveListener implements ActionListener {
+            @Override
+            public void actionPerformed(ActionEvent event) {
+                try {
+                    PrintWriter out = new PrintWriter("Budget.txt");
+                    out.println("Income: " + input.getText());
+                    out.println(result.getText());
+                    out.println(rent.getText());
+                    out.println(savings.getText());
+                    out.println(investments.getText());
+                    out.println(food.getText());
+                    out.println(entertainment.getText());
+                    out.close();
+
+                } catch(IOException e){
+                    System.out.println("IOException occurred");
+                }
+            }
+        }
         
         setSize(600,800);
         plistener = new ProvinceListener();
         blistener = new EnterListener();
+        saveListener = new saveListener();
         createControlPanel();
     }
 
@@ -88,19 +112,29 @@ public class ATaxIncomeFrame extends JFrame {
         JPanel resultPanel = createResultsPanel();
         JPanel radioPanel = createRadioPanel();
         JPanel inputPanel = createInputPanel();
-        JPanel buttonPanel = createButtonPanel();
         JPanel budgetPanel = createBudgetPanel();
+        JPanel savePanel = createSavePanel();
         JPanel controlPanel = new JPanel();
         
         controlPanel.setLayout(new GridLayout(5,1));
         
         controlPanel.add(inputPanel);
         controlPanel.add(radioPanel);
-        controlPanel.add(buttonPanel);
         controlPanel.add(resultPanel);
         controlPanel.add(budgetPanel);
+        controlPanel.add(savePanel);
         
         add(controlPanel);
+    }
+
+    private JPanel createSavePanel() {
+        JPanel savePanel = new JPanel();
+        JButton saveButton = new JButton("Save");
+        saveButton.addActionListener(saveListener);
+        savePanel.setPreferredSize(new Dimension(600, 25));
+        savePanel.setBackground(Color.gray);
+        savePanel.add(saveButton);
+        return savePanel;
     }
 
     /**
@@ -121,6 +155,9 @@ public class ATaxIncomeFrame extends JFrame {
         butList.add(nwt);
         butList.add(pei);
         butList.add(yuk);
+        for(int i = 0; i < 13; i++){
+            butList.get(i).setBackground(Color.gray);
+        }
     }
 
     /**
@@ -142,7 +179,7 @@ public class ATaxIncomeFrame extends JFrame {
     private JPanel createRadioPanel() {
         JPanel radioPanel = new JPanel();
         radioPanel.setBorder(new TitledBorder(new EtchedBorder(),"Province"));
-        radioPanel.setLayout(new GridLayout(3,5));
+        radioPanel.setLayout(new GridLayout(5,5));
         createRadioButtons();
         addButtonsToList();
         addProvListener();
@@ -152,6 +189,9 @@ public class ATaxIncomeFrame extends JFrame {
             radioPanel.add(butList.get(j));
         }
         radioPanel.setBackground(Color.gray);
+        calc = new JButton("Calculate");
+        calc.addActionListener(blistener);
+        radioPanel.add(calc);
         
         return radioPanel;
     }
@@ -200,24 +240,6 @@ public class ATaxIncomeFrame extends JFrame {
         inputPanel.setBackground(Color.gray);
         
         return inputPanel;
-    }
-
-    /**
-     * EFFECTS creates the buttonPanel
-     * @return JPanel buttonPanel
-     */
-
-    private JPanel createButtonPanel() {
-
-        calc = new JButton("Calculate");
-        calc.addActionListener(blistener);
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.add(calc);
-        buttonPanel.setPreferredSize(new Dimension(600,75));
-        buttonPanel.setBackground(Color.gray);
-        buttonPanel.setBorder(new EtchedBorder());
-        
-        return buttonPanel;
     }
 
     /**

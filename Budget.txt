@@ -1,0 +1,7 @@
+Income: 100000
+After tax salary: 74596
+Rent: $1864 (Maximum)
+Savings: $932
+Investments: $1554
+Food/Grocery: $932
+Entertainment: $932
